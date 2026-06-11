@@ -1,4 +1,4 @@
-# AcyclicJoin SGX Benchmark
+# Parallel Oblivious Acyclic Joins for TEE-based Encrypted Databases
 
 **Paper PDF:** [Parallel_Oblivious_Acyclic_Joins_in_TEE_based_Encrypted_Databases__Full_Version_Submit_.pdf](https://github.com/senntuse-commits/Parallel_Oblivious_Acyclic_Joins_for_TEE-based_Encrypted_Databases/blob/main/Parallel_Oblivious_Acyclic_Joins_in_TEE_based_Encrypted_Databases__Full_Version_Submit_.pdf)
 
