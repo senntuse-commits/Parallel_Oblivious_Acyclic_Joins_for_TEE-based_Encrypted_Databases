@@ -13,10 +13,10 @@ reports, use the following paper names:
 
 | CLI flag | Internal label | Paper/report name | High-level role |
 |---|---|---|---|
-| `-ours` | `ours` | `JFYAN` | Bottom-up filtering plus top-down materialization. |
-| `-obliv` | `obliv` | `PARYAN` | Two-phase filtering plus ObliViator-style join. |
-| `-relaxed` | `relaxed` | `OBLIYAN` | Relaxed oblivious join baseline. |
-| `--all` | all modes | all three | Runs `JFYAN`, `PARYAN`, and `OBLIYAN` in sequence. |
+| `-JFYan` | `JFYan` | `JFYan` | Bottom-up filtering plus top-down materialization. |
+| `-ParYan` | `ParYan` | `ParYan` | Two-phase filtering plus ObliViator-style join. |
+| `-ObliYan` | `ObliYan` | `ObliYan` | Relaxed oblivious join baseline. |
+| `--all` | all modes | all three | Runs `JFYan`, `ParYan`, and `ObliYan` in sequence. |
 
 ## Source Attribution
 
@@ -77,7 +77,7 @@ signed enclave, then runs the benchmark from the repository root.
 Example using built-in sample data:
 
 ```bash
-./exec.sh -ours --profile -t 16
+./exec.sh -JFYan --profile -t 16
 ```
 
 Equivalent manual build:
@@ -85,13 +85,13 @@ Equivalent manual build:
 ```bash
 cmake -S . -B build -DSGX_MODE=HW -DSGX_DEBUG=1 -DCMAKE_BUILD_TYPE=Release
 cmake --build build -j"$(nproc)"
-./build/App/app -ours --profile -t 16
+./build/App/app -JFYan --profile -t 16
 ```
 
 Simulation mode can be selected with:
 
 ```bash
-SGX_MODE=SIM ./exec.sh -ours --profile
+SGX_MODE=SIM ./exec.sh -JFYan --profile
 ```
 
 ## Data Preparation
@@ -137,10 +137,10 @@ output size, pass `-tau`:
 
 | Parameter | Value | Meaning |
 |---|---:|---|
-| `-ours` | flag | Run `JFYAN` only. This is the default mode. |
-| `-obliv` | flag | Run `PARYAN` only. |
-| `-relaxed` | flag | Run `OBLIYAN` only. |
-| `--all` | flag | Run all three modes: `JFYAN`, `PARYAN`, `OBLIYAN`. |
+| `-JFYan` | flag | Run `JFYan` only. This is the default mode. |
+| `-ParYan` | flag | Run `ParYan` only. |
+| `-ObliYan` | flag | Run `ObliYan` only. |
+| `--all` | flag | Run all three modes: `JFYan`, `ParYan`, `ObliYan`. |
 | `--bench-only` | flag | Return only result dimensions, avoiding full result copy-out to the app. |
 | `--no-result` | flag | Alias for `--bench-only`. |
 | `--profile` | flag | Enable detailed enclave-side timing and primitive timing output. Also implies `--bench-only`. |

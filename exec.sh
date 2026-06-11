@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Build settings can be overridden from the environment, for example:
-# SGX_MODE=SIM BUILD_TYPE=Debug ./exec.sh -ours --profile
+# SGX_MODE=SIM BUILD_TYPE=Debug ./exec.sh -JFYan --profile
 BUILD_DIR="${BUILD_DIR:-build}"
 SGX_MODE="${SGX_MODE:-HW}"
 SGX_DEBUG="${SGX_DEBUG:-1}"

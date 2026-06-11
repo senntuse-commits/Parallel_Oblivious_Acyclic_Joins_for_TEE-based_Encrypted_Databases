@@ -24,7 +24,7 @@ using namespace std;
 namespace
 {
 // Internal mode ids. The README maps these flags to the report names:
-// -ours -> JFYAN, -obliv -> PARYAN, -relaxed -> OBLIYAN.
+// -JFYan -> JFYan, -ParYan -> ParYan, -ObliYan -> ObliYan.
 constexpr int ModeOurs = 0;
 constexpr int ModeObliViator = 1;
 constexpr int ModeRelaxed = 2;
@@ -62,11 +62,11 @@ const char *modeName(int mode)
     switch (mode)
     {
     case ModeOurs:
-        return "ours";
+        return "JFYan";
     case ModeObliViator:
-        return "obliv";
+        return "ParYan";
     case ModeRelaxed:
-        return "relaxed";
+        return "ObliYan";
     default:
         return "unknown";
     }
@@ -124,9 +124,9 @@ const char *primitiveKindName(int kind)
 
 void printUsage(const char *prog)
 {
-    std::cout << "Usage: " << prog << " [-ours|-obliv|-relaxed|--all] [--bench-only|--profile|--stage-profile] [-t threads] [--thread-sweep list] [-m max_cells] [-tau value]\n"
+    std::cout << "Usage: " << prog << " [-JFYan|-ParYan|-ObliYan|--all] [--bench-only|--profile|--stage-profile] [-t threads] [--thread-sweep list] [-m max_cells] [-tau value]\n"
               << "                  [--sql18 projected_dir|--sql64 projected_dir|--sql72 projected_dir|--sql85 projected_dir|--sql85-chain3 projected_dir|--sql85-returns-star projected_dir|--tpch9 tpch_dir|--tpch-ternary-l3 projected_dir|--tpch-binary-l3 projected_dir|--full-ternary-l3] [--print-limit rows]\n"
-              << "Default: sample data, -ours -t 16 -m 1000000 --print-limit 20\n"
+              << "Default: sample data, -JFYan -t 16 -m 1000000 --print-limit 20\n"
               << "--bench-only runs the join and returns only rows/cols, avoiding full result copy-out.\n"
               << "--profile also returns detailed enclave-side stage timings for debugging.\n"
               << "--stage-profile returns coarse stage timings without detailed enclave logs.\n"
@@ -822,14 +822,14 @@ void printComparisonSummary(const std::vector<RunSummary> &summaries, const char
     if (oursFull <= 0.0)
         oursFull = joinOnlyMs(*ours);
 
-    std::cout << prefix << "Ours: upFilter=" << stageTime(*ours, StageOursUpFilter)
+    std::cout << prefix << "JFYan: upFilter=" << stageTime(*ours, StageOursUpFilter)
               << " ms  down=" << oursNoFirstUp
               << " ms  full=" << oursFull << " ms\n";
 
     if (obliv)
     {
         double oblivNoFirstUp = oblivWithoutFirstUpMs(*obliv);
-        std::cout << prefix << "ObliViator: upFilter=" << stageTime(*obliv, StageOblivUpFilter)
+        std::cout << prefix << "ParYan: upFilter=" << stageTime(*obliv, StageOblivUpFilter)
                   << " ms  downFilter=" << stageTime(*obliv, StageOblivDownFilter)
                   << " ms  upJoin=" << stageTime(*obliv, StageOblivJoin)
                   << " ms  compare=" << oblivNoFirstUp << " ms";
@@ -841,7 +841,7 @@ void printComparisonSummary(const std::vector<RunSummary> &summaries, const char
     if (relaxed)
     {
         double relaxedMs = joinOnlyMs(*relaxed);
-        std::cout << prefix << "RelaxedJoin: upFilter=" << stageTime(*relaxed, StageRelaxedUpFilter)
+        std::cout << prefix << "ObliYan: upFilter=" << stageTime(*relaxed, StageRelaxedUpFilter)
                   << " ms  downFilter=" << stageTime(*relaxed, StageRelaxedDownFilter)
                   << " ms  join=" << stageTime(*relaxed, StageRelaxedJoin)
                   << " ms  full=" << relaxedMs << " ms";
@@ -857,20 +857,20 @@ void printComparisonSummary(const std::vector<RunSummary> &summaries, const char
         {
             double relaxedMs = joinOnlyMs(*relaxed);
             if (relaxedMs > 0.0)
-                std::cout << " Relaxed/Ours=" << (relaxedMs / oursFull) << "x";
+                std::cout << " ObliYan/JFYan=" << (relaxedMs / oursFull) << "x";
         }
         if (relaxed && obliv)
         {
             double relaxedMs = joinOnlyMs(*relaxed);
             double oblivTotal = joinOnlyMs(*obliv);
             if (relaxedMs > 0.0 && oblivTotal > 0.0)
-                std::cout << " Relaxed/ObliViator(total)=" << (relaxedMs / oblivTotal) << "x";
+                std::cout << " ObliYan/ParYan(total)=" << (relaxedMs / oblivTotal) << "x";
         }
         if (obliv)
         {
             double oblivDownJoin = oblivWithoutFirstUpMs(*obliv);
             if (oblivDownJoin > 0.0 && oursNoFirstUp > 0.0)
-                std::cout << " ObliViator(down+join)/Ours(down)="
+                std::cout << " ParYan(down+join)/JFYan(down)="
                           << (oblivDownJoin / oursNoFirstUp) << "x";
         }
         std::cout << "\n";
@@ -1097,11 +1097,11 @@ int main(int argc, char **argv)
 
     for (int i = 1; i < argc; ++i)
     {
-        if (std::strcmp(argv[i], "-ours") == 0)
+        if (std::strcmp(argv[i], "-JFYan") == 0)
             mode = ModeOurs;
-        else if (std::strcmp(argv[i], "-obliv") == 0)
+        else if (std::strcmp(argv[i], "-ParYan") == 0)
             mode = ModeObliViator;
-        else if (std::strcmp(argv[i], "-relaxed") == 0)
+        else if (std::strcmp(argv[i], "-ObliYan") == 0)
             mode = ModeRelaxed;
         else if (std::strcmp(argv[i], "--all") == 0)
             runAll = true;
